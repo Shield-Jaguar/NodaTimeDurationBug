@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using NodaTimeDurationBug.Entities;
 
 namespace NodaTimeDurationBug
 {
@@ -11,30 +13,33 @@ namespace NodaTimeDurationBug
 		static async Task Main()
 		{
 			await using var dbContext = new ApplicationDbContext(GetOptions());
+			// await dbContext.Database.EnsureDeletedAsync();
 			await dbContext.Database.EnsureCreatedAsync();
 
-			dbContext.Add(new Property
+			dbContext.Add(new DurationEntity
 			{
 				Id = Guid.NewGuid(),
-				StartDuration = Duration.FromSeconds(0),
-				EndDuration = Duration.FromSeconds(39600),
+				Value = Duration.FromSeconds(3600),
 			});
 
-			dbContext.Add(new Property
+			dbContext.Add(new PeriodEntity
 			{
 				Id = Guid.NewGuid(),
-				StartDuration = Duration.FromSeconds(3600),
-				EndDuration = Duration.FromSeconds(39600),
+				Value = Period.FromSeconds(3600),
 			});
 
 			await dbContext.SaveChangesAsync();
 
 			dbContext.ChangeTracker.Clear();
 
-			var allProperties = await dbContext.Properties.ToListAsync();
-			foreach (var property in allProperties)
+			foreach (var durationEntity in await dbContext.Durations.ToListAsync())
 			{
-				Console.WriteLine(property);
+				Console.WriteLine(durationEntity);
+			}
+
+			foreach (var periodEntity in await dbContext.Periods.ToListAsync())
+			{
+				Console.WriteLine(periodEntity);
 			}
 		}
 

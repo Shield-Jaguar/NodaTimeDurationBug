@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NodaTimeDurationBug.Entities;
 
 namespace NodaTimeDurationBug
 {
@@ -8,6 +9,9 @@ namespace NodaTimeDurationBug
 		{
 			
 		}
-		public DbSet<Property> Properties => Set<Property>();
+
+		public DbSet<DurationEntity> Durations => Set<DurationEntity>();
+
+		public DbSet<PeriodEntity> Periods => Set<PeriodEntity>();
 	}
 }
